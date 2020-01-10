@@ -1,0 +1,68 @@
+Name:       @PACKAGE_NAME@
+Version:    @PACKAGE_VERSION@
+Release:    1%{?dist}
+Summary:    The Rawcode engine for IBus input platform
+License:    GPLv2+
+Group:      System Environment/Libraries
+URL:        https://fedorahosted.org/ibus-rawcode/
+Source0:    https://fedorahosted.org/releases/i/b/ibus-rawcode/%{name}-%{version}.tar.gz
+
+BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
+BuildRequires:  gettext-devel
+BuildRequires:  libtool
+BuildRequires:  pkgconfig
+BuildRequires:  ibus-devel
+
+Requires:   ibus
+
+%description
+The Rawcode engine for IBus platform.
+
+%prep
+%setup -q
+
+%build
+%configure --disable-static
+# make -C po update-gmo
+make %{?_smp_mflags}
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make DESTDIR=${RPM_BUILD_ROOT} install
+rm -f $RPM_BUILD_ROOT%{python_sitearch}/_rawcode.la
+
+%find_lang %{name}
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files -f %{name}.lang
+%defattr(-,root,root,-)
+%doc AUTHORS COPYING README
+%{_libexecdir}/ibus-engine-rawcode
+%{_datadir}/@PACKAGE@
+%{_datadir}/ibus/component/*
+
+%changelog
+* Tue Mar 27 2013 Pravin Satpute <pravin.d.s@gmail.com> - @VERSION@-1
+- configured with autoconf-2.69, support for aarch64
+
+* Wed Jul 07 2010 Pravin Satpute <pravin.d.s@gmail.com> - @VERSION@-1
+- fixed space hit rhbz bug 602942
+- fixed candidate table label number order rhbz bug 612042
+
+* Wed Apr 21 2010 Pravin Satpute <pravin.d.s@gmail.com> - @VERSION@-1
+- fixed modifiers bug 584233
+- fixed ibus crash for invalid unicode character bugs 584240
+- fixed candidate lookup bug
+
+* Mon Feb 08 2010 Pravin Satpute <pravin.d.s@gmail.com> - @VERSION@-1
+- updated patches for code enhancements from phuang for ibus-1.2.99
+
+* Tue Mar 03 2009 Pravin Satpute <pravin.d.s@gmail.com> - @VERSION@-2
+- removed mod_path
+- added build requires ibus-devel
+
+* Tue Mar 03 2009 Pravin Satpute <pravin.d.s@gmail.com> - @VERSION@-1
+- The first version.
